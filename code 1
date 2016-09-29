@@ -6,48 +6,45 @@ using namespace std;
 int main()
 {
     fstream instream;
-    vector<int> temp;
-    instream.open("file.txt" , ios::in | ios::out);
-    if (instream.is_open())
+    vector<int> temp;                                 // temp vector
+    instream.open("file.txt" , ios::in | ios::out);   //open file
+    if (instream.is_open())                           // open file check
     {
         cerr << "file is opened." << endl;
     }
     else cout << "Unable to open file";
-    int filesize;
-    
     instream.clear();
     instream.seekg(0, instream.end);
-    filesize = (int)instream.tellg();
-    cout << "The size of file1: "<< filesize <<endl;
     
-    int last;
-    instream.seekp (  9000 , ios:: beg );
-    int c;
-    while(!instream.eof())
+    int beg = 5 * 9000;                               // set position 9000 with 5 char each.
+    instream.seekp (  beg  , ios:: beg );
+    int tempvec;
+    while(instream >> tempvec)                        // copy values into vector starting 9000
     {
-        instream >> c;
-        temp.push_back ( c );
+        instream >> tempvec;
+        temp.push_back ( tempvec);
     }
-    for ( int i = 0 ; i < temp.size() ; i ++)
-        cout << temp[i] << endl;
+    instream.close();
+    fstream onstream;                                // outstream
+    onstream.open("file.txt" , ios::in | ios::out);  //outstream open file
+    onstream.seekp(beg, ios::beg);                   // start 9000
+    onstream.width(5);
     int count;
-    for ( int k = 2777 ; k < 2782 ; k ++)
+    for (int i = 2777; i < 2782 ; i ++)             // write 2777 - 2782 to file
     {
-        instream << k << endl;
-        count ++;
+    onstream << i <<endl;
     }
-    instream.seekp (9000 + count , ios:: beg);
+    
+    count *= 5;
+    beg= beg + count;                               //position 9000 + 2777-2782
+    onstream.seekp ( beg , ios:: beg);              // position after including 2777 - 2782
     int counter = 0;
-    while( !instream.eof())
+    int k ;
+    while( onstream >>  k )                         // write the temp vector back to the file
     {
-        instream << temp[counter] << endl;
+        onstream << temp[counter] << endl;
         counter ++;
     }
-
-    instream.seekp ( 9001 , ios::beg);
-    int l;
-    instream >> l ;
-    cout << l << endl;
-    instream.close();
+    onstream.close();
     return 0;
 }
